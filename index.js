@@ -18,6 +18,11 @@ fs.readFile('app/list.json', 'utf8', (err, data) => {
 app.get('/', (req, res) => {
   if (selectedURI === '') {
     selectedURI = list[0];
+  } else if (selectedURI === 'random') {
+    let ur = list[Math.floor(Math.random() * list.length)];
+    console.log(ur);
+    res.redirect(ur.uri);
+    return;
   }
   console.log(selectedURI);
   res.redirect(selectedURI.uri);
@@ -47,6 +52,11 @@ app.get('/delete/:id', (req, res) => {
 
 app.post('/select', bp.json(), (req, res) => {
   let id = req.body.id;
+  if (id === 'rand') {
+    selectedURI = "random";
+    res.send("Random selected!");
+    return;
+  }
   selectedURI = list.find(obj => obj.id === parseInt(id));
   res.send("Selected!");
 })

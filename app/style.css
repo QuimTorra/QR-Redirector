@@ -27,20 +27,36 @@ h3 {
   align-items: center;
 }
 
-.title button {
+.globalBtns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tbtn {
   background: none;
   border: none;
   outline: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #75aae8;
   padding: 0;
+  height: 32px;
+  width: 32px;
 
   transition: 150ms ease-in-out;
 }
 
-.title button:hover, .title button:focus-visible {
+.tbtn:hover, .tbtn:focus-visible {
   color: #5d88b9;
+}
+
+#randBtn {
+  background-color: #7f00fe;
+  border-radius: 4px;
+}
+#randBtn:hover, #randBtn:focus-visible {
+  background-color: #5d88b9;
 }
 
 ul {
