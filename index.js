@@ -73,6 +73,10 @@ app.get('/app/style.css', (req, res) => {
   res.sendFile(path.join(__dirname, 'app/style.css'));
 });
 
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'app/favicon.ico'));
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 })
