@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+
+*, *::after, *::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Ubuntu', sans-serif;
+  color: white;
+}
+
+body {
+  background: #1a1a1a;
+  height: 100vh;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  padding: .5rem;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title button {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #75aae8;
+  padding: 0;
+
+  transition: 150ms ease-in-out;
+}
+
+.title button:hover, .title button:focus-visible {
+  color: #5d88b9;
+}
+
+ul {
+  list-style: none;
+}
+
+.url {
+  margin-block: .5rem;
+  padding: .5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: min(90%, 600px);
+  margin-inline: auto;
+}
+
+.butdiv button {
+  margin: .25rem;
+  border: none;
+  outline: none;
+  padding: .25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+#delbtn {
+  background-color: #fe0000;
+}
+
+#delbtn:hover, #delbtn:focus-visible {
+  background-color: #d10000;
+}
+
+#selbtn {
+  background-color: #00fe70;
+}
+
+#selbtn:hover, #selbtn:focus-visible {
+  background-color: #00d100;
+}
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Redirector - List</title>
+  <link rel="stylesheet" href="app/style.css">
+</head>
+<body>
+  <div class="title">
+    <h3>QR Redirector</h3>
+    <button id="newBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0z"/>
+      </svg>
+    </button>
+  </div>
+  <ul class="list">
+  </ul> 
+  <script>
+    function setList () {
+      var list = document.querySelector('.list');
+      list.innerHTML = '';
+      let items = fetch('/list').then(res => res.json()).then(data => {
+        data.forEach(item => {
+          let li = document.createElement('li');
+
+          let div = document.createElement('div');
+          div.id = item.id;
+          div.classList.add('url');
+          div.innerHTML = item.name;
+          
+          let butdiv = document.createElement('div');
+          butdiv.classList.add('butdiv');
+          let selBtn = document.createElement('button');
+          selBtn.id = 'selbtn';
+          selBtn.innerHTML = 'SELECT';
+          selBtn.onclick = () => {
+            fetch('/select', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                id: item.id
+              })
+            }).then(res => res.json()).then(data => {
+            });
+          }
+
+          let delBtn = document.createElement('button');
+          delBtn.id = 'delbtn';
+          delBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+  <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+</svg>`;
+          delBtn.onclick = () => {
+            fetch('/delete/' + item.id).then(res => res.json()).then(data => {
+            });
+            li.remove();
+          }
+
+          butdiv.appendChild(selBtn);
+          butdiv.appendChild(delBtn);
+          div.appendChild(butdiv);
+          li.appendChild(div);
+          list.appendChild(li);
+        });
+      });
+    }
+
+    setList();
+
+    let newBtn = document.querySelector('#newBtn');
+    newBtn.onclick = () => {
+      let n = prompt('Enter name');
+      let u = prompt('Enter URL');
+
+      if (! (n && u)) {
+        return;
+      }
+
+      fetch('/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: n,
+          uri: u
+        })
+      });
+
+      setList();
+    }
+  </script>
+</body>
+</html>
