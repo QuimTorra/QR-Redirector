@@ -1,30 +1,49 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import bp from 'body-parser'
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, child, get, set } from "firebase/database";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBC1Nhbfc8AnghBrHKsrhznQG83qM-T8wg",
+  authDomain: "qr-redirector-92dd3.firebaseapp.com",
+  databaseURL: "https://qr-redirector-92dd3-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "qr-redirector-92dd3",
+  storageBucket: "qr-redirector-92dd3.appspot.com",
+  messagingSenderId: "341546320145",
+  appId: "1:341546320145:web:5e1e56f42cca1234dd4cb0"
+};
+
+const fapp = initializeApp(firebaseConfig);
+const db = getDatabase(fapp);
+const dbRef = ref(db);
 const app = express();
-const bp = require('body-parser')
 const PORT = process.env.PORT || 3000;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let selectedURI = '';
-
 let list = []
 
-// load the list of uris from the file
-fs.readFile('app/list.json', 'utf8', (err, data) => {
-  if (err) throw err;
-  list = JSON.parse(data);
+get(child(dbRef, '/list')).then((snapshot) => {
+  if (snapshot.exists()) {
+    list = snapshot.val();
+  } else {
+    console.log("No data available");
+  }
+}).catch((error) => {
+  console.error(error);
 });
 
 app.get('/', (req, res) => {
-  if (selectedURI === '') {
-    selectedURI = list[0];
-  } else if (selectedURI === 'random') {
+  if (selectedURI === '' || selectedURI === 'random') {
     let ur = list[Math.floor(Math.random() * list.length)];
-    console.log(ur);
     res.redirect(ur.uri);
     return;
   }
-  console.log(selectedURI);
   res.redirect(selectedURI.uri);
 });
 
@@ -35,18 +54,16 @@ app.post('/new', bp.json(), (req, res) => {
     uri: req.body.uri
   };
   list.push(obj);
-  fs.writeFile('app/list.json', JSON.stringify(list), (err) => {
-    if (err) throw err;
-  });
+  // TODO: Save to db
+  writeData(obj.id, obj.name, obj.uri);
   res.send("Received!")
 });
 
+// TODO: delete from db
 app.get('/delete/:id', (req, res) => {
   let id = req.params.id;
   list = list.filter(obj => obj.id !== parseInt(id));
-  fs.writeFile('app/list.json', JSON.stringify(list), (err) => {
-    if (err) throw err;
-  });
+  set(ref(db, 'list/'+id), null)
   res.send("Deleted!");
 });
 
@@ -66,21 +83,26 @@ app.get('/list', (req, res) => {
 });
 
 app.get('/app', (req, res) => {
-  res.sendFile(path.join(__dirname, 'app/index.html'));
+  res.sendFile('app/index.html', { root: __dirname });
 });
 
 app.get('/app/style.css', (req, res) => {
-  res.sendFile(path.join(__dirname, 'app/style.css'));
+  res.sendFile('app/style.css', {root: __dirname});
 });
 
 app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, 'app/favicon.ico'));
-});
-
-app.get('/json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'app/list.json'));
+  res.sendFile('app/favicon.ico', {root: __dirname});
 });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 })
+
+function writeData(id, name, uri) {
+  const db = getDatabase();
+  set(ref(db, 'list/' + id), {
+    id: id,
+    name: name,
+    uri: uri
+  });
+}
